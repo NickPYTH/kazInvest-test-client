@@ -1,7 +1,9 @@
-import {Card, Flex, GetProps, Input, notification, NotificationArgsProps, Space} from "antd";
+import {Button, Card, Flex, GetProps, Input, notification, NotificationArgsProps, Typography} from "antd";
 import React, {useEffect, useState} from "react";
-import {AudioOutlined} from "@ant-design/icons";
+import {AudioOutlined, MessageOutlined} from "@ant-design/icons";
 import {messageAPI} from "service/MessageService";
+
+const { Title } = Typography;
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -128,10 +130,17 @@ const MainPage = () => {
     // -----
 
     return(
-        <Flex style={{height: window.innerHeight, width: window.innerWidth}} justify="center" align="center">
+        <div style={{height: window.innerHeight, width: window.innerWidth}}>
             {contextHolder}
-            <Space direction="vertical" style={{width: 400}}>
+            <Flex vertical justify="space-evenly" style={{height: '100%', marginLeft: 150}}>
+                <Flex vertical>
+                    <Button icon={<MessageOutlined />} />
+                    <Title style={{color: 'white', margin: "20px 0 20px 0"}} level={2}>Hi there!</Title>
+                    <Title style={{color: 'white', margin: "0 0 20px 0"}}>What would you like to know?</Title>
+                    <Title style={{color: 'white', margin: 0, opacity: 0.6, width: 430}} level={4}>Use one of the most common prompts below or ask your own question</Title>
+                </Flex>
                 <Search
+                    style={{width: 500}}
                     disabled={isLoading}
                     value={transcript}
                     onChange={(e) => setTranscript(e.target.value)}
@@ -145,8 +154,8 @@ const MainPage = () => {
                     {data.answer}
                 </Card>
                 }
-            </Space>
-        </Flex>
+            </Flex>
+        </div>
     )
 }
 
