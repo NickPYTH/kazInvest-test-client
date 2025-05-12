@@ -23,9 +23,9 @@ const MainPage = () => {
     // -----
 
     // Notification
-    const openNotification = (placement: NotificationPlacement, msg:string) => {
+    const openNotification = (placement: NotificationPlacement, header: string, msg:string) => {
         api.info({
-            message: `Oops!`,
+            message: header,
             description: <Context.Consumer>{({ name }) => `${msg}`}</Context.Consumer>,
             placement,
         });
@@ -100,7 +100,7 @@ const MainPage = () => {
     useEffect(() => {
         if (error) {
             let localError: {data: { error: string }} = error as {data: { error: string }};
-            openNotification("topRight", localError.data?.error);
+            openNotification("topRight", "Oops", localError.data?.error);
         }
     }, [error]);
     // -----
@@ -110,8 +110,15 @@ const MainPage = () => {
         setIsListening(!isListening);
     };
     const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
-        if (transcript) askAI({question: transcript});
-        else openNotification("topRight", "Empty question");
+        if (isLoading) {
+            openNotification("topRight", "Oops", "Previous request in process");
+            return;
+        }
+        if (transcript) {
+            askAI({question: transcript});
+            openNotification("topRight", "OK", "Request sent");
+        }
+        else openNotification("topRight", "Oops", "Empty question");
     };
     // -----
 
@@ -141,7 +148,6 @@ const MainPage = () => {
                 </Flex>
                 <Search
                     style={{width: 500}}
-                    disabled={isLoading}
                     value={transcript}
                     onChange={(e) => setTranscript(e.target.value)}
                     placeholder="enter a question"
@@ -150,7 +156,7 @@ const MainPage = () => {
                     suffix={audioSuffix}
                     onSearch={onSearch}
                 />
-                {data && <Card>
+                {data && <Card style={{width: 500}}>
                     {data.answer}
                 </Card>
                 }
